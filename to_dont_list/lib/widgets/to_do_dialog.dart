@@ -42,7 +42,7 @@ class _ToDoDialogState extends State<ToDoDialog> {
         ElevatedButton(
           key: const Key("OKButton"),
           style: yesStyle,
-          child: const Text('OK'),
+          child: const Text('hi'),
           onPressed: () {
             setState(() {
               Navigator.pop(context);

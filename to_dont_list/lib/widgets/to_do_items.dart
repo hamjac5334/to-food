@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:to_dont_list/objects/item.dart';
+import 'package:to_dont_list/objects/pitch.dart';
 
-typedef ToDoListChangedCallback = Function(Item item, bool completed);
-typedef ToDoListRemovedCallback = Function(Item item);
+typedef ToDoListChangedCallback = Function(Pitch item, bool completed);
+typedef ToDoListRemovedCallback = Function(Pitch item);
 
 class ToDoListItem extends StatelessWidget {
   ToDoListItem(
-      {required this.item,
+      {required this.pitch,
       required this.completed,
       required this.onListChanged,
       required this.onDeleteItem})
-      : super(key: ObjectKey(item));
+      : super(key: ObjectKey(pitch));
 
-  final Item item;
+  final Pitch pitch;
   final bool completed;
 
   final ToDoListChangedCallback onListChanged;
@@ -42,19 +42,19 @@ class ToDoListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        onListChanged(item, completed);
+        onListChanged(pitch, completed);
       },
       onLongPress: completed
           ? () {
-              onDeleteItem(item);
+              onDeleteItem(pitch);
             }
           : null,
       leading: CircleAvatar(
         backgroundColor: _getColor(context),
-        child: Text(item.abbrev()),
+        child: Text(pitch.count.toString()),
       ),
       title: Text(
-        item.name,
+        pitch.name,
         style: _getTextStyle(context),
       ),
     );

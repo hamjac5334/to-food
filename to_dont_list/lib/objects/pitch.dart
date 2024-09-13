@@ -1,6 +1,6 @@
 class Pitch {
-  Pitch({required this.strike});
-  final bool strike;
+  Pitch({required this.name});
+  final String name;
   int count = 1;
 
   void increase(){

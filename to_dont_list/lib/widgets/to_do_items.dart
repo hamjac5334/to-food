@@ -4,8 +4,9 @@ import 'package:to_dont_list/objects/pitch.dart';
 typedef ToDoListChangedCallback = Function(Pitch item, bool completed);
 typedef ToDoListRemovedCallback = Function(Pitch item);
 
-class ToDoListItem extends StatelessWidget {
-  ToDoListItem(
+
+class PitchCountItem extends StatefulWidget {
+  PitchCountItem(
       {required this.pitch,
       required this.completed,
       required this.onListChanged,
@@ -18,19 +19,25 @@ class ToDoListItem extends StatelessWidget {
   final ToDoListChangedCallback onListChanged;
   final ToDoListRemovedCallback onDeleteItem;
 
+  @override
+  State<PitchCountItem> createState() => _PitchCountItemState();
+}
+
+class _PitchCountItemState extends State<PitchCountItem> {
+
   Color _getColor(BuildContext context) {
     // The theme depends on the BuildContext because different
     // parts of the tree can have different themes.
     // The BuildContext indicates where the build is
     // taking place and therefore which theme to use.
 
-    return completed //
+    return widget.completed //
         ? Colors.black54
         : Theme.of(context).primaryColor;
   }
 
   TextStyle? _getTextStyle(BuildContext context) {
-    if (!completed) return null;
+    if (!widget.completed) return null;
 
     return const TextStyle(
       color: Colors.black54,
@@ -42,21 +49,26 @@ class ToDoListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        onListChanged(pitch, completed);
+        widget.onListChanged(widget.pitch, widget.completed);
       },
-      onLongPress: completed
+      onLongPress: widget.completed
           ? () {
-              onDeleteItem(pitch);
+              widget.onDeleteItem(widget.pitch);
             }
           : null,
-      leading: CircleAvatar(
-        backgroundColor: _getColor(context),
-        child: Text(pitch.count.toString()),
+      leading: ElevatedButton(
+        onPressed:(){
+          setState(() {
+            widget.pitch.increase();
+          });
+        },
+        child: Text(widget.pitch.count.toString()),
       ),
       title: Text(
-        pitch.name,
+        widget.pitch.name,
         style: _getTextStyle(context),
       ),
     );
   }
 }
+

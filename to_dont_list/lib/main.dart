@@ -1,6 +1,5 @@
 // Started with https://docs.flutter.dev/development/ui/widgets-intro
 import 'package:flutter/material.dart';
-import 'package:to_dont_list/objects/item.dart';
 import 'package:to_dont_list/objects/pitch.dart';
 import 'package:to_dont_list/widgets/to_do_items.dart';
 import 'package:to_dont_list/widgets/to_do_dialog.dart';
@@ -62,7 +61,7 @@ class _ToDoListState extends State<ToDoList> {
         body: ListView(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           children: items.map((item) {
-            return ToDoListItem(
+            return PitchCountItem(
               pitch: item,
               completed: _itemSet.contains(item),
               onListChanged: _handleListChanged,

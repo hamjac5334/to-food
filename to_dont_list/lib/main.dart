@@ -4,15 +4,15 @@ import 'package:to_dont_list/objects/pitch.dart';
 import 'package:to_dont_list/widgets/to_do_items.dart';
 import 'package:to_dont_list/widgets/to_do_dialog.dart';
 
-class ToDoList extends StatefulWidget {
-  const ToDoList({super.key});
+class PitchCount extends StatefulWidget {
+  const PitchCount({super.key});
 
   @override
-  State createState() => _ToDoListState();
+  State createState() => _PitchCountState();
 }
 
-class _ToDoListState extends State<ToDoList> {
-  final List<Pitch> items = [Pitch(name: "Strike"), Pitch(name: "Ball")];
+class _PitchCountState extends State<PitchCount> {
+  final List<Pitch> items = [Pitch(name: "Pitch")];
   final _itemSet = <Pitch>{};
 
   void _handleListChanged(Pitch item, bool completed) {
@@ -56,7 +56,7 @@ class _ToDoListState extends State<ToDoList> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('To Do List'),
+          title: const Text('Pitch Tracker'),
         ),
         body: ListView(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -67,6 +67,7 @@ class _ToDoListState extends State<ToDoList> {
               onListChanged: _handleListChanged,
               onDeleteItem: _handleDeleteItem,
             );
+            
           }).toList(),
         ),
         floatingActionButton: FloatingActionButton(
@@ -84,6 +85,6 @@ class _ToDoListState extends State<ToDoList> {
 void main() {
   runApp(const MaterialApp(
     title: 'To Do List',
-    home: ToDoList(),
+    home: PitchCount(),
   ));
 }

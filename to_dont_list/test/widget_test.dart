@@ -9,24 +9,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:to_dont_list/main.dart';
-import 'package:to_dont_list/objects/item.dart';
+import 'package:to_dont_list/objects/pitch.dart';
 import 'package:to_dont_list/widgets/to_do_items.dart';
 
 void main() {
-  test('Item abbreviation should be first letter', () {
-    const item = Item(name: "add more todos");
-    expect(item.abbrev(), "a");
-  });
 
   // Yes, you really need the MaterialApp and Scaffold
-  testWidgets('ToDoListItem has a text', (tester) async {
+  testWidgets('PitchCount has a text', (tester) async {
     await tester.pumpWidget(MaterialApp(
         home: Scaffold(
-            body: ToDoListItem(
-                pitch: const Item(name: "test"),
+            body: PitchCountItem(
+                pitch: Pitch(name: "test"),
                 completed: true,
-                onListChanged: (Item item, bool completed) {},
-                onDeleteItem: (Item item) {}))));
+                onListChanged: (Pitch item, bool completed) {},
+                onDeleteItem: (Pitch item) {}))));
     final textFinder = find.text('test');
 
     // Use the `findsOneWidget` matcher provided by flutter_test to verify
@@ -34,57 +30,47 @@ void main() {
     expect(textFinder, findsOneWidget);
   });
 
-  testWidgets('ToDoListItem has a Circle Avatar with abbreviation',
-      (tester) async {
-    await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-            body: ToDoListItem(
-                pitch: const Item(name: "test"),
-                completed: true,
-                onListChanged: (Item item, bool completed) {},
-                onDeleteItem: (Item item) {}))));
-    final abbvFinder = find.text('t');
-    final avatarFinder = find.byType(CircleAvatar);
 
-    CircleAvatar circ = tester.firstWidget(avatarFinder);
-    Text ctext = circ.child as Text;
+  testWidgets('Default PitchCounter has one item', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: PitchCount()));
 
-    // Use the `findsOneWidget` matcher provided by flutter_test to verify
-    // that the Text widgets appear exactly once in the widget tree.
-    expect(abbvFinder, findsOneWidget);
-    expect(circ.backgroundColor, Colors.black54);
-    expect(ctext.data, "t");
+    final listItemFinder = find.byType(PitchCountItem);
+
+    expect(listItemFinder, findsAtLeast(1));
   });
 
-  testWidgets('Default ToDoList has one item', (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: ToDoList()));
-
-    final listItemFinder = find.byType(ToDoListItem);
-
-    expect(listItemFinder, findsOneWidget);
-  });
-
-  testWidgets('Clicking and Typing adds item to ToDoList', (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: ToDoList()));
+  testWidgets('Clicking and Typing adds pitch to PitchCounter', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: PitchCount()));
 
     expect(find.byType(TextField), findsNothing);
 
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pump(); // Pump after every action to rebuild the widgets
-    expect(find.text("hi"), findsNothing);
+    expect(find.text("strike"), findsNothing);
 
-    await tester.enterText(find.byType(TextField), 'hi');
+    await tester.enterText(find.byType(TextField), 'strike');
     await tester.pump();
-    expect(find.text("hi"), findsOneWidget);
+    expect(find.text("strike"), findsOneWidget);
 
     await tester.tap(find.byKey(const Key("OKButton")));
     await tester.pump();
-    expect(find.text("hi"), findsOneWidget);
+    expect(find.text("strike"), findsOneWidget);
 
-    final listItemFinder = find.byType(ToDoListItem);
+    final listItemFinder = find.byType(PitchCountItem);
 
     expect(listItemFinder, findsNWidgets(2));
   });
+
+  testWidgets('Count increases on pitch when clicked', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: PitchCount()));
+    final avatarFinder = find.byType(ElevatedButton);	
+    ElevatedButton pitch = tester.firstWidget(avatarFinder);	    
+    Text ptext = pitch.child as Text;
+
+    expect(ptext.data, "1");
+
+  }
+  );
 
   // One to test the tap and press actions on the items?
 }

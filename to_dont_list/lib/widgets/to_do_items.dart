@@ -25,17 +25,6 @@ class PitchCountItem extends StatefulWidget {
 
 class _PitchCountItemState extends State<PitchCountItem> {
 
-  Color _getColor(BuildContext context) {
-    // The theme depends on the BuildContext because different
-    // parts of the tree can have different themes.
-    // The BuildContext indicates where the build is
-    // taking place and therefore which theme to use.
-
-    return widget.completed //
-        ? Colors.black54
-        : Theme.of(context).primaryColor;
-  }
-
   TextStyle? _getTextStyle(BuildContext context) {
     if (!widget.completed) return null;
 
@@ -49,11 +38,12 @@ class _PitchCountItemState extends State<PitchCountItem> {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        widget.onListChanged(widget.pitch, widget.completed);
+        setState(() {
+          widget.pitch.increase();
+        });
       },
       onLongPress: widget.completed
           ? () {
-              widget.onDeleteItem(widget.pitch);
             }
           : null,
       leading: ElevatedButton(

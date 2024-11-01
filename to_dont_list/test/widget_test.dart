@@ -22,6 +22,8 @@ void main() {
                 pitch: Pitch(name: "test"),
                 completed: true,
                 onListChanged: (Pitch item, bool completed) {},
+                //added color to the unit test to make it happy
+                color: Colors.blue,
                 onDeleteItem: (Pitch item) {}))));
     final textFinder = find.text('test');
 

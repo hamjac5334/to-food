@@ -6,4 +6,10 @@ class Pitch {
   void increase(){
     count++;
   }
+
+  void decrease() {
+    if (count > 0) {
+      count--;
+    }
+  }
 }

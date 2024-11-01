@@ -1,8 +1,13 @@
 // Started with https://docs.flutter.dev/development/ui/widgets-intro
+
+
 import 'package:flutter/material.dart';
 import 'package:to_dont_list/objects/pitch.dart';
 import 'package:to_dont_list/widgets/to_do_items.dart';
 import 'package:to_dont_list/widgets/to_do_dialog.dart';
+
+//imported for random color generation (Jack Hamilton)
+import 'dart:math';
 
 class PitchCount extends StatefulWidget {
   const PitchCount({super.key});
@@ -12,8 +17,19 @@ class PitchCount extends StatefulWidget {
 }
 
 class _PitchCountState extends State<PitchCount> {
-  final List<Pitch> items = [Pitch(name: "Pitch")];
+  
+  final Random _random = Random();
+  //adjusted Sam's original list of just Pitch to different types of pitches
+  final List<Pitch> items = [Pitch(name: "Pitch"), Pitch(name: "Curveball"),Pitch(name: "Fastball"), Pitch(name: "Slider"), Pitch(name: "Changeup")];
   final _itemSet = <Pitch>{};
+  final Map<String, Color> pitchColors = {
+    "Pitch": Colors.blue,
+    "Curveball": Colors.green,
+    "Fastball": Colors.red,
+    "Slider": Colors.purple,
+    "Changeup": Colors.orange,
+  };
+
 
   void _handleListChanged(Pitch item, bool completed) {
     setState(() {
@@ -40,6 +56,7 @@ class _PitchCountState extends State<PitchCount> {
     setState(() {
       print("Deleting item");
       items.remove(item);
+      pitchColors.remove(item.name);
     });
   }
 
@@ -49,7 +66,17 @@ class _PitchCountState extends State<PitchCount> {
       Pitch item = Pitch(name: itemText);
       items.insert(0, item);
       textController.clear();
+      //add here
+      final Color randomColor = _getRandomColor();
+      pitchColors[itemText] = randomColor;
     });
+  }
+
+//https://stackoverflow.com/questions/51340588/flutter-how-can-i-make-a-random-color-generator-background (Jack Hamilton)
+  Color _getRandomColor() {
+    return Color.fromARGB(
+      255, _random.nextInt(256), _random.nextInt(256), _random.nextInt(256), 
+    );
   }
 
   @override
@@ -64,6 +91,7 @@ class _PitchCountState extends State<PitchCount> {
             return PitchCountItem(
               pitch: item,
               completed: _itemSet.contains(item),
+              color: pitchColors[item.name] ?? _getRandomColor(),
               onListChanged: _handleListChanged,
               onDeleteItem: _handleDeleteItem,
             );
@@ -81,6 +109,8 @@ class _PitchCountState extends State<PitchCount> {
             }));
   }
 }
+
+
 
 void main() {
   runApp(const MaterialApp(

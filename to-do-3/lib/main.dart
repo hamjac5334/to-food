@@ -1,10 +1,8 @@
-// Started with https://docs.flutter.dev/development/ui/widgets-intro
 import 'package:flutter/material.dart';
 import 'package:to_dont_list/objects/classes.dart';
 import 'package:to_dont_list/objects/item.dart';
 import 'package:to_dont_list/widgets/to_do_items.dart';
 import 'package:to_dont_list/widgets/to_do_dialog.dart';
-
 
 class FoodList extends StatefulWidget {
   const FoodList({super.key});
@@ -14,34 +12,36 @@ class FoodList extends StatefulWidget {
 }
 
 class _FoodListState extends State<FoodList> {
-  final List<Classes> items = [Classes(name: "Food", color: FoodGroup.vegetable)];
+  final List<Classes> items = [
+    Classes(name: "Food", color: FoodGroup.vegetable, calorie: 150)
+  ];
   final _itemSet = <Classes>{};
 
-
-  //add a final count for servings
+  // Add a final count for servings and calorie
   final Map<FoodGroup, int> foodGroupCounts = {
     for (var group in FoodGroup.values) group: 0
+  };
+  final Map<FoodGroup, double> foodGroupCalories = {
+    for (var group in FoodGroup.values) group: 0.0
   };
 
   void _handleListChanged(Classes item, bool completed) {
     setState(() {
-      // When a user changes what's in the list, you need
-      // to change _itemSet inside a setState call to
-      // trigger a rebuild.
-      // The framework then calls build, below,
-      // which updates the visual appearance of the app.
-
       items.remove(item);
       if (!completed) {
         print("Completing");
         _itemSet.add(item);
         items.add(item);
         foodGroupCounts[item.color] = foodGroupCounts[item.color]! + 1;
+        foodGroupCalories[item.color] = foodGroupCalories[item.color]! +
+            item.calorie; // Add calories based on servings
       } else {
         print("Making Undone");
         _itemSet.remove(item);
         items.insert(0, item);
         foodGroupCounts[item.color] = foodGroupCounts[item.color]! - 1;
+        foodGroupCalories[item.color] = foodGroupCalories[item.color]! -
+            item.calorie; // Subtract calories based on servings
       }
     });
   }
@@ -51,74 +51,88 @@ class _FoodListState extends State<FoodList> {
       print("Deleting item");
       items.remove(item);
       foodGroupCounts[item.color] = foodGroupCounts[item.color]! - 1;
+      foodGroupCalories[item.color] = foodGroupCalories[item.color]! -
+          item.calorie; // Adjust the calorie count when deleting
     });
   }
 
-  void _handleNewItem(String itemText, FoodGroup food, TextEditingController textController) {
+  void _handleNewItem(String itemText, FoodGroup food, double calorie,
+      TextEditingController textController) {
     setState(() {
       print("Adding new item");
-      //changed this to get rid of the constant
-      Classes item = Classes(name: itemText, color: food);
+      Classes item = Classes(name: itemText, color: food, calorie: calorie);
       items.insert(0, item);
-      foodGroupCounts[food] = foodGroupCounts[food]! + 1;
-      textController.clear();
+      foodGroupCounts[food] =
+          foodGroupCounts[food]! + 1; // Update food group count
+      foodGroupCalories[food] = foodGroupCalories[food]! +
+          item.calorie; // Add calories based on servings
+      textController.clear(); // Clear the input field
     });
   }
 
-  //added class here
   void _incrementFoodGroupCount(FoodGroup foodGroup) {
     setState(() {
       foodGroupCounts[foodGroup] = foodGroupCounts[foodGroup]! + 1;
     });
   }
 
+  void _incrementFoodGroupCalorie(FoodGroup foodGroup, double calorie) {
+    setState(() {
+      foodGroupCalories[foodGroup] = foodGroupCalories[foodGroup]! + calorie;
+    });
+  }
+
   void _showTotalDialog() {
     showDialog(
-        context: context,
-        builder: (_) {
-          return AlertDialog(
-            title: const Text('Total Servings'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: foodGroupCounts.entries.map((entry) {
-                return Text('${entry.key.name}: ${entry.value}');
-              }).toList(),
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: const Text('Total Servings and Calories'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: foodGroupCounts.entries.map((entry) {
+              final calories = foodGroupCalories[entry.key] ?? 0.0;
+              return Text(
+                  '${entry.key.name}: ${entry.value} servings, $calories calories');
+            }).toList(),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
             ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        });
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Servings  Food List'),
-        ),
-        body: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          children: items.map((item) {
-            return ClassListItem(
-              course: item,
-              completed: _itemSet.contains(item),
-              onListChanged: _handleListChanged,
-              onDeleteItem: _handleDeleteItem,
-              onIncrementFoodGroup: _incrementFoodGroupCount,
-            );
-          }).toList(),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      appBar: AppBar(
+        title: const Text('Servings Food List'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        children: items.map((item) {
+          return ClassListItem(
+            course: item,
+            completed: _itemSet.contains(item),
+            onListChanged: _handleListChanged,
+            onDeleteItem: _handleDeleteItem,
+            onIncrementFoodGroup: _incrementFoodGroupCount,
+            onIncrementFoodGroupCalorie: _incrementFoodGroupCalorie,
+          );
+        }).toList(),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 10.0), 
+        padding: const EdgeInsets.only(bottom: 10.0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             FloatingActionButton(
               onPressed: _showTotalDialog,
@@ -128,10 +142,10 @@ class _FoodListState extends State<FoodList> {
               child: const Icon(Icons.add),
               onPressed: () {
                 showDialog(
-                  context: context,
-                  builder: (_) {
-                    return FoodDialog(onListAdded: _handleNewItem);
-                  });
+                    context: context,
+                    builder: (_) {
+                      return FoodDialog(onListAdded: _handleNewItem);
+                    });
               },
             ),
           ],

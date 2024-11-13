@@ -5,8 +5,8 @@ import 'package:to_dont_list/objects/item.dart';
 typedef FoodListChangedCallback = Function(Classes item, bool completed);
 typedef FoodListRemovedCallback = Function(Classes item);
 typedef IncrementFoodGroupCallback = void Function(FoodGroup foodGroup);
-
-
+typedef IncrementFoodGroupCalorieCallback = void Function(
+    FoodGroup foodGroup, double calorie);
 
 class ClassListItem extends StatefulWidget {
   ClassListItem(
@@ -14,8 +14,8 @@ class ClassListItem extends StatefulWidget {
       required this.completed,
       required this.onListChanged,
       required this.onDeleteItem,
-
-      required this.onIncrementFoodGroup})
+      required this.onIncrementFoodGroup,
+      required this.onIncrementFoodGroupCalorie})
       : super(key: ObjectKey(course));
 
   final Classes course;
@@ -24,13 +24,13 @@ class ClassListItem extends StatefulWidget {
   final FoodListChangedCallback onListChanged;
   final FoodListRemovedCallback onDeleteItem;
   final IncrementFoodGroupCallback onIncrementFoodGroup;
+  final IncrementFoodGroupCalorieCallback onIncrementFoodGroupCalorie;
 
   @override
   State<ClassListItem> createState() => _ClassListItemState();
 }
 
 class _ClassListItemState extends State<ClassListItem> {
-
   TextStyle? _getTextStyle(BuildContext context) {
     if (!widget.completed) return null;
 
@@ -53,14 +53,17 @@ class _ClassListItemState extends State<ClassListItem> {
           : null,
       leading: ElevatedButton(
         onPressed: () {
-            setState(() {
-              widget.course.increment();
-              //try adding change here
-              widget.onIncrementFoodGroup(widget.course.color);
-            });
-            
+          setState(() {
+            widget.course.increment();
+
+            //try adding change here
+            widget.onIncrementFoodGroup(widget.course.color);
+            widget.onIncrementFoodGroupCalorie(
+                widget.course.color, widget.course.calorie);
+          });
         },
-        style:ElevatedButton.styleFrom(backgroundColor: widget.course.color.rgbcolor),
+        style: ElevatedButton.styleFrom(
+            backgroundColor: widget.course.color.rgbcolor),
         //change this from item.name to item.abbrev
         //child: Text(item.name),
         child: Text(widget.course.count.toString()),

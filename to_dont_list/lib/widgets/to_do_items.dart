@@ -6,15 +6,12 @@ typedef ToDoListChangedCallback = Function(Classes item, bool completed);
 typedef ToDoListRemovedCallback = Function(Classes item);
 typedef IncrementFoodGroupCallback = void Function(FoodGroup foodGroup);
 
-
-
 class ClassListItem extends StatefulWidget {
   ClassListItem(
       {required this.course,
       required this.completed,
       required this.onListChanged,
       required this.onDeleteItem,
-
       required this.onIncrementFoodGroup})
       : super(key: ObjectKey(course));
 
@@ -30,7 +27,6 @@ class ClassListItem extends StatefulWidget {
 }
 
 class _ClassListItemState extends State<ClassListItem> {
-
   TextStyle? _getTextStyle(BuildContext context) {
     if (!widget.completed) return null;
 
@@ -53,14 +49,14 @@ class _ClassListItemState extends State<ClassListItem> {
           : null,
       leading: ElevatedButton(
         onPressed: () {
-            setState(() {
-              widget.course.increment();
-              //try adding change here
-              widget.onIncrementFoodGroup(widget.course.color);
-            });
-            
+          setState(() {
+            widget.course.increment();
+            //try adding change here
+            widget.onIncrementFoodGroup(widget.course.color);
+          });
         },
-        style:ElevatedButton.styleFrom(backgroundColor: widget.course.color.rgbcolor),
+        style: ElevatedButton.styleFrom(
+            backgroundColor: widget.course.color.rgbcolor),
         //change this from item.name to item.abbrev
         //child: Text(item.name),
         child: Text(widget.course.count.toString()),

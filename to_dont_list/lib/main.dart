@@ -5,7 +5,6 @@ import 'package:to_dont_list/objects/item.dart';
 import 'package:to_dont_list/widgets/to_do_items.dart';
 import 'package:to_dont_list/widgets/to_do_dialog.dart';
 
-
 class ToDoList extends StatefulWidget {
   const ToDoList({super.key});
 
@@ -14,9 +13,10 @@ class ToDoList extends StatefulWidget {
 }
 
 class _ToDoListState extends State<ToDoList> {
-  final List<Classes> items = [Classes(name: "Food", color: FoodGroup.vegetable)];
+  final List<Classes> items = [
+    Classes(name: "Food", color: FoodGroup.vegetable)
+  ];
   final _itemSet = <Classes>{};
-
 
   //add a final count for servings
   final Map<FoodGroup, int> foodGroupCounts = {
@@ -54,7 +54,8 @@ class _ToDoListState extends State<ToDoList> {
     });
   }
 
-  void _handleNewItem(String itemText, FoodGroup food, TextEditingController textController) {
+  void _handleNewItem(
+      String itemText, FoodGroup food, TextEditingController textController) {
     setState(() {
       print("Adding new item");
       //changed this to get rid of the constant
@@ -99,26 +100,26 @@ class _ToDoListState extends State<ToDoList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Servings  Food List'),
-        ),
-        body: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          children: items.map((item) {
-            return ClassListItem(
-              course: item,
-              completed: _itemSet.contains(item),
-              onListChanged: _handleListChanged,
-              onDeleteItem: _handleDeleteItem,
-              onIncrementFoodGroup: _incrementFoodGroupCount,
-            );
-          }).toList(),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      appBar: AppBar(
+        title: const Text('Servings  Food List'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        children: items.map((item) {
+          return ClassListItem(
+            course: item,
+            completed: _itemSet.contains(item),
+            onListChanged: _handleListChanged,
+            onDeleteItem: _handleDeleteItem,
+            onIncrementFoodGroup: _incrementFoodGroupCount,
+          );
+        }).toList(),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 10.0), 
+        padding: const EdgeInsets.only(bottom: 10.0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             FloatingActionButton(
               onPressed: _showTotalDialog,
@@ -128,10 +129,10 @@ class _ToDoListState extends State<ToDoList> {
               child: const Icon(Icons.add),
               onPressed: () {
                 showDialog(
-                  context: context,
-                  builder: (_) {
-                    return ToDoDialog(onListAdded: _handleNewItem);
-                  });
+                    context: context,
+                    builder: (_) {
+                      return ToDoDialog(onListAdded: _handleNewItem);
+                    });
               },
             ),
           ],

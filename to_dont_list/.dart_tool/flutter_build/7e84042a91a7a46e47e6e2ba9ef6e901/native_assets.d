@@ -1,0 +1,1 @@
+ C:\\Users\\E\\Documents\\Mobile\ Software\\to-dont-list\\to_dont_list\\.dart_tool\\flutter_build\\7e84042a91a7a46e47e6e2ba9ef6e901\\native_assets.yaml: 

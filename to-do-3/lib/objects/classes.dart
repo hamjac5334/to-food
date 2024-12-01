@@ -12,6 +12,15 @@ enum FoodGroup {
   final Color rgbcolor;
 }
 
+enum ExerciseGroup {
+  abs,
+  cardio,
+  back,
+  legs,
+  arms,
+  chest
+}
+
 class Classes {
   Classes({required this.name, required this.color, required this.calorie});
   final String name;
@@ -20,6 +29,18 @@ class Classes {
   int count = 1;
 
   void increment() {
+    count++;
+  }
+}
+
+class Exercises{
+  Exercises({required this.name, required this.exname, required this.burned});
+  final String name;
+  final ExerciseGroup exname;
+  double burned;
+  int count = 1;
+
+  void incrementex(){
     count++;
   }
 }

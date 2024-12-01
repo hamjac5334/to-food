@@ -24,6 +24,8 @@ class _FoodListState extends State<FoodList>  with TickerProviderStateMixin {
   ];
   final _itemSet2 = <Exercises>{};
 
+  late double total;
+
 
   // Add a final count for servings and calorie
   final Map<FoodGroup, int> foodGroupCounts = {
@@ -197,6 +199,23 @@ class _FoodListState extends State<FoodList>  with TickerProviderStateMixin {
     });
   }
 
+  String _gettotal(){
+
+    var exvalue = 0.0;
+    for (double element in exerciseGroupCalories.values) {
+    exvalue = combine(exvalue, element);
+        }
+    
+    var value = 0.0;
+    for (double element in foodGroupCalories.values) {
+    value = combine(value, element);
+        }
+
+     total = (value - exvalue);   
+      return (total.toString());
+  }
+
+
   void _showTotalDialog() {
     showDialog(
       context: context,
@@ -243,7 +262,7 @@ class _FoodListState extends State<FoodList>  with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Calorie List'),
-        actions: [Text("Total Daily Calories:")],
+        actions: [Text("Total Daily Calories:" + _gettotal())],
         bottom: TabBar(
           labelColor: Colors.black,
           controller: _tabController,
@@ -302,6 +321,7 @@ class _FoodListState extends State<FoodList>  with TickerProviderStateMixin {
             FloatingActionButton(
               child: const Icon(Icons.add),
               onPressed: () {
+                
                 showDialog(
                     context: context,
                     builder: (_) {
@@ -317,6 +337,11 @@ class _FoodListState extends State<FoodList>  with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+  
+  double combine(double value, double element) {
+    double result = value + element;
+    return result;
   }
 }
 

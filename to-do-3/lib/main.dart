@@ -5,6 +5,7 @@ import 'package:to_dont_list/widgets/exercise_dialog.dart';
 import 'package:to_dont_list/widgets/exercise_items.dart';
 import 'package:to_dont_list/widgets/to_do_items.dart';
 import 'package:to_dont_list/widgets/to_do_dialog.dart';
+import 'package:to_dont_list/widgets/goal_progress.dart';
 
 class FoodList extends StatefulWidget {
   const FoodList({super.key});
@@ -255,28 +256,103 @@ class _FoodListState extends State<FoodList>  with TickerProviderStateMixin {
     _tabController.dispose();
     super.dispose();
   }
+  void _showGoalDialog() {
+  final TextEditingController goalController = TextEditingController(
+    text: _calorieGoal.toString(),
+  );
+
+  showDialog(
+    context: context,
+    builder: (_) {
+      return AlertDialog(
+        title: const Text('Set Daily Calorie Goal'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: goalController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Daily Calorie Goal',
+                hintText: 'Enter your daily calorie goal',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              final newGoal = double.tryParse(goalController.text);
+              if (newGoal != null && newGoal > 0) {
+                setState(() {
+                  _calorieGoal = newGoal;
+                  _hasSetGoal = true;
+                });
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      );
+    },
+  );
+}
+  double _calorieGoal = 2000.0; // Default daily calorie goal
+  bool _hasSetGoal = false;
+  double get _remainingCalories => _calorieGoal - double.parse(_gettotal());
 
   @override
   Widget build(BuildContext context) {
     
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Calorie List'),
-        actions: [Text("Total Daily Calories:" + _gettotal())],
-        bottom: TabBar(
-          labelColor: Colors.black,
-          controller: _tabController,
-          labelStyle: TextStyle(fontSize: 12.0),
-          tabs: const [
-            Tab(text: "Food"), // Wrap each Text in a Tab widget
-            Tab(text: "Exercises"),
+     appBar: AppBar(
+      title: const Text('Calorie List'),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.flag),
+          onPressed: _showGoalDialog,
+          tooltip: 'Set Goal',
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Daily Goal: ${_calorieGoal.toStringAsFixed(1)}"),
+            Text("Remaining: ${_remainingCalories.toStringAsFixed(1)}"),
           ],
-          indicatorSize: TabBarIndicatorSize
-              .label, // Aligns the indicator with each label's width
-          labelPadding: EdgeInsets.symmetric(
-              horizontal: 16.0), // Optional: adjust spacing between tabs
+        ),
+        const SizedBox(width: 16),
+      ],
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(70),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            children: [
+              CalorieProgressIndicator(
+                current: double.parse(_gettotal()),
+                goal: _calorieGoal,
+              ),
+              TabBar(
+                labelColor: Colors.black,
+                controller: _tabController,
+                labelStyle: TextStyle(fontSize: 12.0),
+                tabs: const [
+                  Tab(text: "Food"),
+                  Tab(text: "Exercises"),
+                ],
+                indicatorSize: TabBarIndicatorSize.label,
+                labelPadding: EdgeInsets.symmetric(horizontal: 16.0),
+              ),
+            ],
+          ),
         ),
       ),
+    ),
       body: TabBarView(controller: _tabController, children: [
          ListView(
         padding: const EdgeInsets.symmetric(vertical: 8.0),

@@ -255,6 +255,9 @@ class _FoodListState extends State<FoodList>  with TickerProviderStateMixin {
     _tabController.dispose();
     super.dispose();
   }
+  double _calorieGoal = 2000.0; // Default daily calorie goal
+  bool _hasSetGoal = false;
+  double get _remainingCalories => _calorieGoal - double.parse(_gettotal());
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +265,16 @@ class _FoodListState extends State<FoodList>  with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Calorie List'),
-        actions: [Text("Total Daily Calories:" + _gettotal())],
+        actions: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Daily Goal: ${_calorieGoal.toStringAsFixed(1)}"),
+              Text("Remaining: ${_remainingCalories.toStringAsFixed(1)}"),
+            ],
+          ),
+          const SizedBox(width: 16),
+        ],
         bottom: TabBar(
           labelColor: Colors.black,
           controller: _tabController,

@@ -255,6 +255,52 @@ class _FoodListState extends State<FoodList>  with TickerProviderStateMixin {
     _tabController.dispose();
     super.dispose();
   }
+  void _showGoalDialog() {
+  final TextEditingController goalController = TextEditingController(
+    text: _calorieGoal.toString(),
+  );
+
+  showDialog(
+    context: context,
+    builder: (_) {
+      return AlertDialog(
+        title: const Text('Set Daily Calorie Goal'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: goalController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Daily Calorie Goal',
+                hintText: 'Enter your daily calorie goal',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              final newGoal = double.tryParse(goalController.text);
+              if (newGoal != null && newGoal > 0) {
+                setState(() {
+                  _calorieGoal = newGoal;
+                  _hasSetGoal = true;
+                });
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      );
+    },
+  );
+}
   double _calorieGoal = 2000.0; // Default daily calorie goal
   bool _hasSetGoal = false;
   double get _remainingCalories => _calorieGoal - double.parse(_gettotal());
@@ -266,6 +312,11 @@ class _FoodListState extends State<FoodList>  with TickerProviderStateMixin {
       appBar: AppBar(
         title: const Text('Calorie List'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.flag),
+            onPressed: _showGoalDialog,
+            tooltip: 'Set Goal',
+          ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

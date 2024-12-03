@@ -5,6 +5,7 @@ import 'package:to_dont_list/widgets/exercise_dialog.dart';
 import 'package:to_dont_list/widgets/exercise_items.dart';
 import 'package:to_dont_list/widgets/to_do_items.dart';
 import 'package:to_dont_list/widgets/to_do_dialog.dart';
+import 'package:to_dont_list/widgets/goal_progress.dart';
 
 class FoodList extends StatefulWidget {
   const FoodList({super.key});
@@ -309,37 +310,49 @@ class _FoodListState extends State<FoodList>  with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Calorie List'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.flag),
-            onPressed: _showGoalDialog,
-            tooltip: 'Set Goal',
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+     appBar: AppBar(
+      title: const Text('Calorie List'),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.flag),
+          onPressed: _showGoalDialog,
+          tooltip: 'Set Goal',
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Daily Goal: ${_calorieGoal.toStringAsFixed(1)}"),
+            Text("Remaining: ${_remainingCalories.toStringAsFixed(1)}"),
+          ],
+        ),
+        const SizedBox(width: 16),
+      ],
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(70),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
             children: [
-              Text("Daily Goal: ${_calorieGoal.toStringAsFixed(1)}"),
-              Text("Remaining: ${_remainingCalories.toStringAsFixed(1)}"),
+              CalorieProgressIndicator(
+                current: double.parse(_gettotal()),
+                goal: _calorieGoal,
+              ),
+              TabBar(
+                labelColor: Colors.black,
+                controller: _tabController,
+                labelStyle: TextStyle(fontSize: 12.0),
+                tabs: const [
+                  Tab(text: "Food"),
+                  Tab(text: "Exercises"),
+                ],
+                indicatorSize: TabBarIndicatorSize.label,
+                labelPadding: EdgeInsets.symmetric(horizontal: 16.0),
+              ),
             ],
           ),
-          const SizedBox(width: 16),
-        ],
-        bottom: TabBar(
-          labelColor: Colors.black,
-          controller: _tabController,
-          labelStyle: TextStyle(fontSize: 12.0),
-          tabs: const [
-            Tab(text: "Food"), // Wrap each Text in a Tab widget
-            Tab(text: "Exercises"),
-          ],
-          indicatorSize: TabBarIndicatorSize
-              .label, // Aligns the indicator with each label's width
-          labelPadding: EdgeInsets.symmetric(
-              horizontal: 16.0), // Optional: adjust spacing between tabs
         ),
       ),
+    ),
       body: TabBarView(controller: _tabController, children: [
          ListView(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
